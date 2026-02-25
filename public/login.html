@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    body { font-family: sans-serif; max-width: 320px; margin: 3rem auto; padding: 1rem; }
+    h1 { font-size: 1.25rem; }
+    label { display: block; margin-top: 0.75rem; }
+    input { width: 100%; padding: 0.5rem; margin-top: 0.25rem; box-sizing: border-box; }
+    button { margin-top: 1rem; padding: 0.5rem 1rem; cursor: pointer; }
+    .error { color: #c00; font-size: 0.9rem; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>Login</h1>
+  <form method="post" action="/login">
+    <label>Username <input type="text" name="username" required autocomplete="username"></label>
+    <label>Password <input type="password" name="password" required autocomplete="current-password"></label>
+    <button type="submit">Sign in</button>
+  </form>
+  <p class="error" id="err"></p>
+  <script>
+    const params = new URLSearchParams(location.search);
+    if (params.get('error')) document.getElementById('err').textContent = 'Invalid username or password.';
+  </script>
+</body>
+</html>

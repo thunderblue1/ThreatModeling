@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Message of the Day</title>
+  <style>
+    body { font-family: sans-serif; max-width: 560px; margin: 2rem auto; padding: 1rem; }
+    h1 { font-size: 1.25rem; }
+    .motd { background: #f5f5f5; padding: 1rem; margin: 1rem 0; border-radius: 4px; }
+    .comments { margin-top: 1.5rem; }
+    .comment { border-bottom: 1px solid #eee; padding: 0.5rem 0; font-size: 0.95rem; }
+    .comment-meta { color: #666; font-size: 0.85rem; }
+    form { margin-top: 1rem; }
+    textarea { width: 100%; min-height: 80px; padding: 0.5rem; box-sizing: border-box; }
+    button { margin-top: 0.5rem; padding: 0.5rem 1rem; cursor: pointer; }
+    a { color: #06c; }
+  </style>
+</head>
+<body>
+  <h1>Message of the Day</h1>
+  <p><a href="/logout">Log out</a></p>
+  <div class="motd" id="motd">Loading…</div>
+  <div class="comments">
+    <h2>Comments</h2>
+    <div id="comments-list">Loading…</div>
+    <form method="post" action="/api/comments">
+      <textarea name="comment_text" placeholder="Add a comment..." required></textarea>
+      <button type="submit">Post comment</button>
+    </form>
+  </div>
+  <script>
+    (async function () {
+      const r = await fetch('/api/motd', { credentials: 'same-origin' });
+      if (!r.ok) { window.location.href = '/login.html'; return; }
+      const motd = await r.json();
+      document.getElementById('motd').textContent = motd.message || '(No message)';
+
+      const r2 = await fetch('/api/comments', { credentials: 'same-origin' });
+      const comments = await r2.json();
+      document.getElementById('comments-list').innerHTML = comments.length
+        ? comments.map(c => `<div class="comment"><span class="comment-meta">${escapeHtml(c.username)} · ${escapeHtml(c.created_at)}</span><br>${escapeHtml(c.comment_text)}</div>`).join('')
+        : '<p>No comments yet.</p>';
+    })();
+    function escapeHtml(s) {
+      const div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+  </script>
+</body>
+</html>
